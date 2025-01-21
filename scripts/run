@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+DIR="/code"
+BUILD_DIR="$DIR/build"
+SOURCE_DIR="$DIR/src"
+
+PROGRAM_FILE="$(echo $1 | grep -Eo '\w+\.\w+$')"
+PROGRAM_NAME="$(echo $PROGRAM_FILE | sed -E 's/\.\w+$//g')"
+
+makeBuildDir()
+{
+  mkdir -p $BUILD_DIR
+}
+
+makeBuildDir
+
+as "$DIR/src/${PROGRAM_FILE}" -o "$BUILD_DIR/$PROGRAM_NAME.o"
+ld "$BUILD_DIR/$PROGRAM_NAME.o" -o "$BUILD_DIR/$PROGRAM_NAME"
+rm "$BUILD_DIR/$PROGRAM_NAME.o"
+"$BUILD_DIR/$PROGRAM_NAME"
+echo $?

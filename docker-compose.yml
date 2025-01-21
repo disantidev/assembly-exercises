@@ -1,0 +1,9 @@
+services:
+  srv:
+    build: .
+    stdin_open: true
+    tty: true
+    working_dir: /code/src
+    volumes:
+      - ./scripts/run:/usr/local/bin/run
+      - .:/code

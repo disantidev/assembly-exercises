@@ -1,7 +1,0 @@
-#!/bin/bash 
-PROGRAM="${1/\.s/}"
-as "./$PROGRAM.s" -o "./bin/$PROGRAM.o"
-ld "./bin/$PROGRAM.o" -o "./bin/$PROGRAM"
-rm "./bin/$PROGRAM.o"
-"./bin/$PROGRAM"
-echo $?
