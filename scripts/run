@@ -4,9 +4,6 @@ DIR="/code"
 BUILD_DIR="$DIR/build"
 SOURCE_DIR="$DIR/src"
 
-PROGRAM_FILE="$(echo $1 | grep -Eo '\w+\.\w+$')"
-PROGRAM_NAME="$(echo $PROGRAM_FILE | sed -E 's/\.\w+$//g')"
-
 makeBuildDir()
 {
   mkdir -p $BUILD_DIR
@@ -14,8 +11,22 @@ makeBuildDir()
 
 makeBuildDir
 
-as "$DIR/src/${PROGRAM_FILE}" -o "$BUILD_DIR/$PROGRAM_NAME.o"
-ld "$BUILD_DIR/$PROGRAM_NAME.o" -o "$BUILD_DIR/$PROGRAM_NAME"
-rm "$BUILD_DIR/$PROGRAM_NAME.o"
-"$BUILD_DIR/$PROGRAM_NAME"
+PROGRAM_BUILD_PATHS=""
+BINARY_PATH=""
+
+for FILE in $@
+do
+  PROGRAM_FILE="$(echo $FILE | grep -Eo '\w+\.\w+$')"
+  PROGRAM_NAME="$(echo $PROGRAM_FILE | sed -E 's/\.\w+$//g')"
+  PROGRAM_ORIGIN_PATH="$SOURCE_DIR/$PROGRAM_NAME.s"
+  PROGRAM_BUILD_PATH="$BUILD_DIR/$PROGRAM_NAME.o"
+  PROGRAM_BUILD_PATHS="$PROGRAM_BUILD_PATHS $PROGRAM_BUILD_PATH"
+  BINARY_PATH="$BUILD_DIR/$PROGRAM_NAME"
+
+  as $PROGRAM_ORIGIN_PATH -o $PROGRAM_BUILD_PATH
+done
+
+ld $PROGRAM_BUILD_PATHS -o $BINARY_PATH
+rm $PROGRAM_BUILD_PATHS
+$BINARY_PATH
 echo $?
